@@ -1,0 +1,48 @@
+#include <stdlib.h>
+#include <stdio.h>
+#include <math.h>
+#include <string.h>
+#include <pthread.h>
+#include <unistd.h>
+#include <time.h>
+
+pthread_mutex_t lock;
+int numbers[]={2000,1000000,10000000,100000000};
+int divider[]={2,4,6,8};
+int divided,input,num,i;
+int count=0;
+double time_spent,pi;
+
+void* thread(void*arg){
+    
+    for (i=0;i<divided;i++){
+        double x,y,z;
+        x=(double)rand()/RAND_MAX;
+        y=(double)rand()/RAND_MAX;
+        z=x*x+y*y;
+        if (z<=1) count++;
+
+    }
+}
+
+
+int main(){
+    printf("escolha entre 2000(0),1000000(1),10000000(2),100000000(3) \n");
+    scanf("%d",&input);
+    divided=numbers[input]/divider[input];
+    int num=divider[input];
+    pthread_t new_thread[num];
+    clock_t begin = clock();
+    for(i=0;i<num;i++){
+        pthread_create(&new_thread[i],NULL,thread,NULL);
+    }
+    for(i=0;i<num;i++){
+        pthread_join(new_thread[i],NULL);
+    }
+    clock_t end = clock();
+    double time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
+    pi=(double)count/divided*4;
+    printf("#of trials= %d ,estimate of pi is %g \n",numbers[input],pi);
+    printf("the program took %g",time_spent);
+    return 0;
+}
